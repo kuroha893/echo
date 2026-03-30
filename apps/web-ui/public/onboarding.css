@@ -1,0 +1,72 @@
+.onboarding-page {
+  min-height: 100vh;
+}
+
+.onboarding-shell {
+  min-height: 100vh;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.onboarding-card,
+.status-bar {
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.onboarding-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.onboarding-card h1 {
+  margin: 10px 0 0;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.onboarding-card p {
+  margin: 14px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.onboarding-checklist {
+  margin: 18px 0 0;
+  padding-left: 20px;
+  color: var(--text);
+  display: grid;
+  gap: 10px;
+}
+
+.status-bar {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+@media (max-width: 720px) {
+  .onboarding-shell {
+    padding: 18px 12px 18px;
+  }
+
+  .onboarding-card,
+  .status-bar {
+    padding: 18px;
+  }
+
+  .onboarding-card h1 {
+    font-size: 32px;
+  }
+}

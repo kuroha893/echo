@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Echo Onboarding Deprecated</title>
+    <link rel="stylesheet" href="/system.css" />
+    <link rel="stylesheet" href="/onboarding.css" />
+  </head>
+  <body class="onboarding-page" data-theme="dark">
+    <main class="onboarding-shell">
+      <section class="panel onboarding-card">
+        <div class="onboarding-kicker">Deprecated entrypoint</div>
+        <h1 id="onboardingTitle">Onboarding moved to Config v2</h1>
+        <p id="onboardingMessage">
+          Provider setup and voice enrollment now live together in the active
+          Config v2 page. This route is retained only as a compatibility notice
+          and is no longer part of the active browser product flow.
+        </p>
+        <ul id="onboardingChecklist" class="onboarding-checklist">
+          <li>Open Config v2 to configure the required cloud primary LLM and Qwen TTS.</li>
+          <li>Run voice enrollment from the dedicated Config v2 voice-enrollment panel.</li>
+          <li>Return to chat after the runtime readiness checks pass.</li>
+        </ul>
+        <div class="actions compact">
+          <a id="onboardingPrimaryLink" class="btn btn-send" href="/config-v2.html">Open Config v2</a>
+          <a class="btn" href="/">Back to chat</a>
+        </div>
+      </section>
+
+      <footer class="panel status-bar">
+        <span id="onboardingStatusText" class="status ok">Deprecated entrypoint</span>
+      </footer>
+    </main>
+    <script type="module" src="/onboarding.mjs"></script>
+  </body>
+</html>

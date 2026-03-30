@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Echo Avatar Window</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "SF Pro Text", "PingFang SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      -webkit-user-select: none;
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      pointer-events: auto;
+    }
+
+    #stage canvas {
+      -webkit-app-region: no-drag;
+    }
+
+    #drag-handle {
+      display: none;
+    }
+
+    /* ── Resize Mode ── */
+    body.resize-mode-active #stage {
+      cursor: nwse-resize;
+    }
+
+    body.resize-mode-active::before {
+      content: "";
+      position: fixed;
+      inset: 6px;
+      z-index: 29;
+      border: 2px solid rgba(110, 231, 255, 0.92);
+      border-radius: 18px;
+      box-shadow: 0 0 0 1px rgba(12, 22, 34, 0.82),
+        inset 0 0 0 1px rgba(12, 22, 34, 0.72);
+      pointer-events: none;
+    }
+
+    #resize-mode-close {
+      display: none;
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 30;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(10, 14, 24, 0.72);
+      color: #f4f8ff;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+    }
+
+    body.resize-mode-active #resize-mode-close {
+      display: block;
+    }
+
+    #resize-mode-close:hover {
+      background: rgba(18, 28, 44, 0.86);
+    }
+
+    #resize-mode-close:active {
+      transform: translateY(1px);
+    }
+
+    /* ── Layout Tuner Toggle ── */
+    #layout-tuner-toggle {
+      display: none;
+      position: fixed;
+      top: 52px;
+      right: 12px;
+      z-index: 30;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(10, 14, 24, 0.66);
+      color: #dfe8ff;
+      font-size: 11px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+    }
+
+    body.resize-mode-active #layout-tuner-toggle {
+      display: block;
+    }
+
+    #layout-tuner-toggle:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* ── Layout Tuner Panel ── */
+    #layout-tuner-panel {
+      display: none;
+      position: fixed;
+      top: 92px;
+      right: 12px;
+      z-index: 31;
+      width: 220px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(10, 14, 24, 0.9);
+      color: #eff5ff;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-app-region: no-drag;
+    }
+
+    body.resize-mode-active.layout-tuner-open #layout-tuner-panel {
+      display: block;
+    }
+
+    .layout-tuner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .layout-tuner-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    #layout-tuner-close {
+      border: 0;
+      background: transparent;
+      color: #c7d3f3;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .layout-tuner-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .layout-tuner-row label {
+      font-size: 11px;
+      color: #b8c6e8;
+    }
+
+    .layout-tuner-value {
+      font-size: 11px;
+      color: #f3f8ff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .layout-tuner-slider {
+      grid-column: 1 / -1;
+      width: 100%;
+      margin: 0;
+    }
+
+    .layout-tuner-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .layout-tuner-action {
+      flex: 1 1 0;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #edf4ff;
+      padding: 7px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .layout-tuner-action:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    #layout-tuner-status {
+      min-height: 14px;
+      margin-top: 10px;
+      font-size: 10px;
+      color: #8fd0ff;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Click-Through Toggle ── */
+    #click-through-toggle {
+      display: none;
+      position: fixed;
+      top: 92px;
+      right: 12px;
+      z-index: 30;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(10, 14, 24, 0.66);
+      color: #dfe8ff;
+      font-size: 11px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+      user-select: none;
+    }
+
+    body.resize-mode-active #click-through-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #click-through-toggle:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .toggle-indicator {
+      display: inline-block;
+      width: 28px;
+      height: 14px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.18);
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .toggle-indicator::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    body.click-through-active .toggle-indicator {
+      background: rgba(110, 231, 255, 0.5);
+    }
+
+    body.click-through-active .toggle-indicator::after {
+      transform: translateX(14px);
+      background: rgba(110, 231, 255, 0.95);
+    }
+
+    /* ── Drag Zone ── */
+    #drag-zone-toggle {
+      display: none;
+    }
+
+    #drag-zone-visual {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 33.333%;
+      height: 33.333%;
+      transform: translate(-50%, -50%);
+      z-index: 28;
+      border: 2px dashed rgba(255, 209, 102, 0.95);
+      border-radius: 16px;
+      background: rgba(255, 209, 102, 0.1);
+      box-shadow: inset 0 0 0 1px rgba(14, 18, 28, 0.68);
+      pointer-events: none;
+    }
+
+    #drag-zone-visual::before,
+    #drag-zone-visual::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      background: rgba(255, 209, 102, 0.9);
+    }
+
+    #drag-zone-visual::before {
+      left: 50%;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      transform: translateX(-50%);
+    }
+
+    #drag-zone-visual::after {
+      top: 50%;
+      left: 8px;
+      right: 8px;
+      height: 1px;
+      transform: translateY(-50%);
+    }
+
+    body.resize-mode-active #drag-zone-visual {
+      display: block;
+    }
+
+    #status {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="drag-handle"></div>
+  <div id="stage"></div>
+  <button id="resize-mode-close" type="button">Close Resize Mode</button>
+  <button id="layout-tuner-toggle" type="button">Adjust Layout</button>
+  <button id="click-through-toggle" type="button"><span class="toggle-indicator"></span>鼠标穿透</button>
+  <div id="drag-zone-visual"></div>
+  <div id="layout-tuner-panel">
+    <div class="layout-tuner-header">
+      <span class="layout-tuner-title">Layout Tuner</span>
+      <button id="layout-tuner-close" type="button" aria-label="Close layout tuner">×</button>
+    </div>
+    <div class="layout-tuner-row">
+      <label for="layout-offset-x">Offset X</label>
+      <span class="layout-tuner-value" id="layout-offset-x-value">0</span>
+      <input class="layout-tuner-slider" id="layout-offset-x" type="range" min="-120" max="120" step="1" value="0" />
+    </div>
+    <div class="layout-tuner-row">
+      <label for="layout-offset-y">Offset Y</label>
+      <span class="layout-tuner-value" id="layout-offset-y-value">0</span>
+      <input class="layout-tuner-slider" id="layout-offset-y" type="range" min="-120" max="120" step="1" value="0" />
+    </div>
+    <div class="layout-tuner-row">
+      <label for="layout-scale">Scale</label>
+      <span class="layout-tuner-value" id="layout-scale-value">1.00</span>
+      <input class="layout-tuner-slider" id="layout-scale" type="range" min="0.7" max="1.5" step="0.01" value="1" />
+    </div>
+    <div class="layout-tuner-actions">
+      <button class="layout-tuner-action" id="layout-reset" type="button">Reset</button>
+      <button class="layout-tuner-action" id="layout-save" type="button">Save</button>
+    </div>
+    <div id="layout-tuner-status" aria-live="polite"></div>
+  </div>
+  <div id="status">desktop-live2d avatar shell ready</div>
+
+  <script src="../node_modules/pixi.js/dist/browser/pixi.min.js"></script>
+  <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+  <script src="../node_modules/pixi-live2d-display/dist/cubism4.min.js"></script>
+  <script type="module">
+    const statusElement = document.getElementById("status");
+
+    function writeBootStatus(message) {
+      const text = String(message);
+      if (statusElement) {
+        statusElement.textContent = text;
+      }
+      console.error("[desktop-live2d avatar boot]", text);
+    }
+
+    globalThis.__echoDesktopLive2DBootStage = "avatar-html-loader";
+    writeBootStatus("desktop-live2d avatar html loader ready");
+
+    window.addEventListener("error", (event) => {
+      const detail =
+        event.error instanceof Error
+          ? event.error.stack || event.error.message
+          : event.message || "unknown window error";
+      writeBootStatus(`renderer error: ${detail}`);
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      const detail =
+        event.reason instanceof Error
+          ? event.reason.stack || event.reason.message
+          : String(event.reason ?? "unknown rejection");
+      writeBootStatus(`renderer rejection: ${detail}`);
+    });
+  </script>
+  <script type="module" src="./avatar_bootstrap.mjs"></script>
+</body>
+
+</html>

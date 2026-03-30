@@ -1,0 +1,36 @@
+{
+  "model_key": "七七の量贩私皮",
+  "display_name": "七七の量贩私皮",
+  "model_settings_file_name": "nana.model3.json",
+  "model_settings_repo_relative_path": "apps/desktop-live2d/assets/models/七七の量贩私皮/nana.model3.json",
+  "presentation_mode": "full_body",
+  "window_surface": "character_window",
+  "viewport_fit": {
+    "mode": "full_body",
+    "anchor": "bottom_center",
+    "scale_hint": 0.84
+  },
+  "supported_states": [
+    "idle",
+    "listening",
+    "thinking",
+    "speaking"
+  ],
+  "supported_expressions": [
+    "伸手",
+    "困惑符号",
+    "晕晕眼",
+    "泪眼",
+    "爱心眼",
+    "生气符号",
+    "眼罩",
+    "血迹一段",
+    "血迹二段",
+    "黑脸",
+    "默认手拿刀"
+  ],
+  "supported_motions": [
+    "idel 丢追",
+    "idel"
+  ]
+}

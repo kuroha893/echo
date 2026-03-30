@@ -1,0 +1,34 @@
+{
+  "model_key": "fense",
+  "display_name": "fense",
+  "model_settings_file_name": "fense.model3.json",
+  "model_settings_repo_relative_path": "apps/desktop-live2d/assets/models/fense/fense.model3.json",
+  "presentation_mode": "full_body",
+  "window_surface": "character_window",
+  "viewport_fit": {
+    "mode": "full_body",
+    "anchor": "bottom_center",
+    "scale_hint": 0.84
+  },
+  "supported_states": [
+    "idle",
+    "listening",
+    "thinking",
+    "speaking"
+  ],
+  "supported_expressions": [
+    "axy",
+    "heilian",
+    "kuku",
+    "lianhong",
+    "shengqi"
+  ],
+  "supported_motions": [
+    "jingya",
+    "kaixin",
+    "shengqi",
+    "shuijiao",
+    "wink",
+    "yaotou"
+  ]
+}

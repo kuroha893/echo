@@ -1,0 +1,36 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "鸦羽-免费版（无法去除水印）.moc3",
+    "Textures": [
+      "鸦羽-免费版（无法去除水印）.8192/texture_00.png",
+      "鸦羽-免费版（无法去除水印）.8192/texture_01.png",
+      "鸦羽-免费版（无法去除水印）.8192/texture_02.png"
+    ],
+    "Physics": "鸦羽-免费版（无法去除水印）.physics3.json",
+    "DisplayInfo": "鸦羽-免费版（无法去除水印）.cdi3.json",
+    "Expressions": [],
+    "Motions": {
+      "Auto": [
+        {
+          "File": "Scene1.motion3.json"
+        }
+      ]
+    }
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": [
+        "ParamEyeLOpen",
+        "ParamEyeROpen"
+      ]
+    },
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": []
+    }
+  ]
+}

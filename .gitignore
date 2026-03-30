@@ -1,0 +1,39 @@
+# ── Python ──
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# ── Node ──
+node_modules/
+package-lock.json
+
+# ── Reference repos (external mirrored sources, ~685MB) ──
+docs/reference/airi-main/
+docs/reference/open-yachiyo-main/
+docs/reference/GPT-SoVITS-main/
+docs/reference/sglang-main/
+docs/reference/AstrBot-master/
+docs/reference/AgentGal-main/
+docs/reference/photos/
+
+# ── Live2D model assets (binary, ~841MB) ──
+apps/desktop-live2d/assets/models/**/*.moc3
+apps/desktop-live2d/assets/models/**/*.cmo3
+apps/desktop-live2d/assets/models/**/*.png
+apps/desktop-live2d/assets/models/**/*.jpg
+apps/desktop-live2d/assets/models/**/*.jpeg
+apps/desktop-live2d/assets/models/**/*.webp
+
+# ── OS / Editor ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/settings.json
+
+# ── Build outputs ──
+dist/
+out/
+build/

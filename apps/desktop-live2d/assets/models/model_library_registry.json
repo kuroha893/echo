@@ -1,0 +1,41 @@
+{
+  "default_model_key": "fense",
+  "models": [
+    {
+      "model_key": "fense",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/fense/scene_manifest.json"
+    },
+    {
+      "model_key": "juxueli",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/juxueli/scene_manifest.json"
+    },
+    {
+      "model_key": "open-yachiyo-kaguya",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/open-yachiyo-kaguya/scene_manifest.json"
+    },
+    {
+      "model_key": "yangyang",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/yangyang/scene_manifest.json"
+    },
+    {
+      "model_key": "yayu",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/yayu/scene_manifest.json"
+    },
+    {
+      "model_key": "七七の量贩私皮",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/七七の量贩私皮/scene_manifest.json"
+    },
+    {
+      "model_key": "真夜白音",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/真夜白音/scene_manifest.json"
+    },
+    {
+      "model_key": "薇薇安",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/薇薇安/scene_manifest.json"
+    },
+    {
+      "model_key": "阿罗娜live2D(by卡尔莫钦)",
+      "scene_manifest_repo_relative_path": "apps/desktop-live2d/assets/models/阿罗娜live2D(by卡尔莫钦)/scene_manifest.json"
+    }
+  ]
+}

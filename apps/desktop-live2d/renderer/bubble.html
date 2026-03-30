@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Echo Bubble Window</title>
+  <link rel="stylesheet" href="../node_modules/@fontsource/m-plus-rounded-1c/index.css" />
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "M PLUS Rounded 1c", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: transparent;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    #bubble-window {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px 22px 28px;
+      overflow: hidden;
+    }
+
+    #bubble-view {
+      position: absolute;
+      inset: 0;
+      display: none;
+    }
+
+    #subtitle-overlay {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 180ms ease-out;
+      z-index: 50;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    #subtitle-overlay[data-interactive="true"] {
+      pointer-events: auto;
+    }
+
+    #subtitle-overlay[data-visible="true"] {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #subtitle-overlay-panel {
+      width: min(86vw, 1280px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 16px 2px;
+      overflow: hidden;
+    }
+
+    #subtitle-controls {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 160ms ease-out, transform 160ms ease-out;
+      pointer-events: none;
+    }
+
+    #subtitle-overlay[data-interactive="true"] #subtitle-controls {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    #subtitle-drag-handle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 14px;
+      border: 1px solid rgba(125, 125, 125, 0.35);
+      border-radius: 10px;
+      background: rgba(125, 125, 125, 0.28);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      cursor: move;
+    }
+
+    #subtitle-drag-handle::before {
+      content: "";
+      width: 16px;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    #subtitle-window-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subtitle-window-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      background: rgba(12, 18, 30, 0.56);
+      color: rgba(240, 248, 255, 0.96);
+      font: inherit;
+      font-size: 16px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 140ms ease-out, transform 140ms ease-out;
+    }
+
+    .subtitle-window-btn:hover {
+      background: rgba(26, 38, 66, 0.82);
+      transform: translateY(-1px);
+    }
+
+    .subtitle-window-btn--close:hover {
+      background: rgba(186, 53, 62, 0.88);
+    }
+
+    #subtitle-caption-chip {
+      display: inline-flex;
+      max-width: 100%;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px 8px;
+      border-radius: 18px;
+      background: rgba(12, 20, 36, 0.26);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    #subtitle-overlay-text {
+      max-width: 100%;
+      color: rgba(236, 250, 255, 0.99);
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1.16;
+      letter-spacing: 0.01em;
+      text-align: center;
+      white-space: pre-wrap;
+      word-break: break-word;
+      -webkit-text-stroke: 1.6px rgba(111, 201, 255, 0.52);
+      paint-order: stroke fill;
+      overflow: visible;
+      text-shadow:
+        0 8px 26px rgba(0, 0, 0, 0.82),
+        0 0 26px rgba(76, 195, 255, 0.24);
+    }
+
+    .bubble-shell {
+      display: none !important;
+    }
+
+    .bubble-shell--hidden {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    .bubble-shell--streaming {}
+
+    .bubble-shell--pop-in {
+      animation: bubblePopIn 180ms cubic-bezier(0.2, 0.88, 0.2, 1);
+    }
+
+    .bubble-shell__speaker {
+      display: none;
+    }
+
+    .bubble-shell__lines {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      width: 100%;
+      min-height: 160px;
+      padding-top: 52px;
+      overflow: hidden;
+    }
+
+    .bubble-shell__line {
+      line-height: 1.22;
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow: hidden;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.98);
+      text-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.78),
+        0 0 32px rgba(18, 34, 66, 0.48);
+      max-width: 100%;
+    }
+
+    .bubble-shell__streaming {
+      display: none;
+    }
+
+    @keyframes bubblePopIn {
+      0% {
+        transform: translateY(18px);
+        opacity: 0;
+      }
+
+      70% {
+        transform: translateY(0) scale(1.005);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    #status {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      max-width: min(560px, calc(100vw - 24px));
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(7, 10, 18, 0.72);
+      border: 1px solid rgba(195, 225, 255, 0.18);
+      color: rgba(226, 240, 255, 0.96);
+      font-size: 12px;
+      line-height: 1.45;
+      letter-spacing: 0.02em;
+      white-space: pre-wrap;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    @media (max-width: 900px) {
+      #bubble-window {
+        padding: 10px 12px 18px;
+      }
+
+      #subtitle-overlay {
+        width: 100%;
+      }
+
+      #subtitle-overlay-panel {
+        width: 100%;
+        padding: 4px 6px 0;
+      }
+
+      .subtitle-window-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+      }
+
+      #subtitle-caption-chip {
+        padding: 8px 12px 6px;
+        border-radius: 14px;
+      }
+
+      #subtitle-overlay-text {
+        font-size: 32px;
+        line-height: 1.14;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main id="bubble-window" aria-label="Desktop companion bubble window">
+    <section id="bubble-view" aria-label="Floating bubble surface"></section>
+    <section id="subtitle-overlay" aria-hidden="true" data-visible="false">
+      <div id="subtitle-overlay-panel">
+        <div id="subtitle-controls" aria-hidden="true">
+          <div id="subtitle-drag-handle" title="Drag to move"></div>
+          <div id="subtitle-window-controls">
+            <button id="subtitle-minimize-button" class="subtitle-window-btn" type="button" title="Minimize">—</button>
+            <button id="subtitle-close-button" class="subtitle-window-btn subtitle-window-btn--close" type="button"
+              title="Close">×</button>
+          </div>
+        </div>
+        <div id="subtitle-caption-chip">
+          <div id="subtitle-overlay-text"></div>
+        </div>
+      </div>
+    </section>
+    <div id="status">desktop-live2d bubble shell ready</div>
+  </main>
+  <script type="module">
+    const statusElement = document.getElementById("status");
+    const subtitleOverlayElement = document.getElementById("subtitle-overlay");
+    const subtitleOverlayPanelElement = document.getElementById("subtitle-overlay-panel");
+    const subtitleCaptionChipElement = document.getElementById("subtitle-caption-chip");
+    const subtitleOverlayTextElement = document.getElementById("subtitle-overlay-text");
+    const subtitleDragHandleElement = document.getElementById("subtitle-drag-handle");
+    const subtitleMinimizeButtonElement = document.getElementById("subtitle-minimize-button");
+    const subtitleCloseButtonElement = document.getElementById("subtitle-close-button");
+    const debugState = {
+      bootStage: "bubble-html-loader",
+      bootStatus: "",
+      runtimeStatus: "",
+      lastPayloadPreview: "",
+      lastPayloadLength: 0,
+      isStreaming: false,
+      shellVisible: false,
+      lastAction: "",
+      shellClassName: "",
+      shellLineCount: 0,
+      shellRenderedText: "",
+      overlayText: "",
+      speakerColor: null
+    };
+    let overlayHideTimer = null;
+    let overlayForceHidden = false;
+    let overlayInteractive = false;
+    let overlayDragActive = false;
+    let lastRequestedWindowInteractivity = null;
+
+    function normalizeOverlayText(text) {
+      return String(text || "")
+        .replaceAll(" | ", "\n")
+        .replaceAll("<br/>", "\n")
+        .replaceAll("<br />", "\n")
+        .replaceAll("<br>", "\n")
+        .trim();
+    }
+
+    function normalizeHexColor(value) {
+      if (typeof value !== "string") {
+        return null;
+      }
+      const normalized = value.trim().toLowerCase();
+      return /^#[0-9a-f]{6}$/.test(normalized) ? normalized : null;
+    }
+
+    function hexToRgba(hexColor, alpha) {
+      const normalized = normalizeHexColor(hexColor);
+      if (!normalized) {
+        return `rgba(236, 250, 255, ${alpha})`;
+      }
+      const red = Number.parseInt(normalized.slice(1, 3), 16);
+      const green = Number.parseInt(normalized.slice(3, 5), 16);
+      const blue = Number.parseInt(normalized.slice(5, 7), 16);
+      return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+    }
+
+    function applySubtitlePalette() {
+      if (!subtitleOverlayTextElement) {
+        return;
+      }
+      const color = normalizeHexColor(debugState.speakerColor) || "#ecfaff";
+      subtitleOverlayTextElement.style.color = hexToRgba(color, 0.98);
+      subtitleOverlayTextElement.style.webkitTextStroke = `1.6px ${hexToRgba(color, 0.52)}`;
+      subtitleOverlayTextElement.style.textShadow = `0 8px 26px rgba(0, 0, 0, 0.82), 0 0 26px ${hexToRgba(color, 0.24)}`;
+      if (subtitleCaptionChipElement) {
+        subtitleCaptionChipElement.style.border = `1px solid ${hexToRgba(color, 0.18)}`;
+        subtitleCaptionChipElement.style.background = `linear-gradient(180deg, ${hexToRgba(color, 0.14)}, rgba(12, 20, 36, 0.26))`;
+        subtitleCaptionChipElement.style.boxShadow = `0 10px 30px rgba(0, 0, 0, 0.16), 0 0 22px ${hexToRgba(color, 0.12)}`;
+      }
+    }
+
+    function renderSubtitleOverlay() {
+      if (!subtitleOverlayElement || !subtitleOverlayTextElement) {
+        return;
+      }
+      const overlayText = normalizeOverlayText(
+        debugState.overlayText || debugState.shellRenderedText || debugState.lastPayloadPreview
+      );
+      const shouldShow = debugState.shellVisible && overlayText.length > 0 && !overlayForceHidden;
+      subtitleOverlayElement.dataset.visible = shouldShow ? "true" : "false";
+      subtitleOverlayElement.dataset.interactive = overlayInteractive ? "true" : "false";
+      subtitleOverlayElement.setAttribute("aria-hidden", shouldShow ? "false" : "true");
+      applySubtitlePalette();
+      subtitleOverlayTextElement.textContent = shouldShow ? overlayText : "";
+      if (!shouldShow) {
+        subtitleOverlayElement.scrollTop = 0;
+        subtitleOverlayPanelElement?.scrollTo?.(0, 0);
+        subtitleOverlayTextElement.scrollTop = 0;
+      }
+    }
+
+    function clearOverlayHideTimer() {
+      if (overlayHideTimer !== null) {
+        clearTimeout(overlayHideTimer);
+        overlayHideTimer = null;
+      }
+    }
+
+    function cancelOverlayHide() {
+      clearOverlayHideTimer();
+      if (overlayForceHidden) {
+        overlayForceHidden = false;
+      }
+    }
+
+    globalThis.__echoDesktopBubbleScheduleOverlayHide = (delayMs = 5000) => {
+      clearOverlayHideTimer();
+      overlayForceHidden = false;
+      overlayHideTimer = setTimeout(() => {
+        overlayForceHidden = true;
+        renderSubtitleOverlay();
+      }, Math.max(0, Number(delayMs) || 0));
+    };
+
+    function setOverlayInteractive(interactive) {
+      overlayInteractive = interactive === true;
+      renderSubtitleOverlay();
+    }
+
+    function requestWindowInteractivity(interactive) {
+      if (typeof window.echoDesktopLive2D?.sendWindowInteractivity !== "function") {
+        setOverlayInteractive(interactive);
+        return;
+      }
+      const nextInteractive = interactive === true;
+      if (lastRequestedWindowInteractivity === nextInteractive) {
+        setOverlayInteractive(nextInteractive);
+        return;
+      }
+      lastRequestedWindowInteractivity = nextInteractive;
+      setOverlayInteractive(nextInteractive);
+      window.echoDesktopLive2D.sendWindowInteractivity({
+        interactive: nextInteractive
+      });
+    }
+
+    function isPointerInsideOverlay(clientX, clientY) {
+      if (!subtitleOverlayPanelElement || subtitleOverlayElement?.dataset.visible !== "true") {
+        return false;
+      }
+      const rect = subtitleOverlayPanelElement.getBoundingClientRect();
+      return (
+        clientX >= rect.left &&
+        clientX <= rect.right &&
+        clientY >= rect.top &&
+        clientY <= rect.bottom
+      );
+    }
+
+    async function beginOverlayDrag(event) {
+      if (!window.echoDesktopLive2D?.beginWindowDrag) {
+        return;
+      }
+      event.preventDefault();
+      overlayDragActive = true;
+      requestWindowInteractivity(true);
+      await window.echoDesktopLive2D.beginWindowDrag({
+        screenX: event.screenX,
+        screenY: event.screenY
+      });
+    }
+
+    async function updateOverlayDrag(event) {
+      if (!overlayDragActive || !window.echoDesktopLive2D?.updateWindowDrag) {
+        return;
+      }
+      await window.echoDesktopLive2D.updateWindowDrag({
+        screenX: event.screenX,
+        screenY: event.screenY
+      });
+    }
+
+    async function endOverlayDrag() {
+      if (!overlayDragActive || !window.echoDesktopLive2D?.endWindowDrag) {
+        return;
+      }
+      overlayDragActive = false;
+      await window.echoDesktopLive2D.endWindowDrag();
+      requestWindowInteractivity(false);
+    }
+
+    function renderStatus() {
+      if (!statusElement) {
+        return;
+      }
+      statusElement.textContent = [
+        `stage: ${debugState.bootStage || "unknown"}`,
+        `boot: ${debugState.bootStatus || "-"}`,
+        `runtime: ${debugState.runtimeStatus || "-"}`,
+        `visible: ${debugState.shellVisible ? "yes" : "no"}`,
+        `streaming: ${debugState.isStreaming ? "yes" : "no"}`,
+        `action: ${debugState.lastAction || "-"}`,
+        `shellClass: ${debugState.shellClassName || "-"}`,
+        `lineCount: ${debugState.shellLineCount || 0}`,
+        `textLength: ${debugState.lastPayloadLength || 0}`,
+        `preview: ${debugState.lastPayloadPreview || "-"}`,
+        `rendered: ${debugState.shellRenderedText || "-"}`
+      ].join("\n");
+      renderSubtitleOverlay();
+    }
+
+    globalThis.__echoDesktopBubbleSetDebugState = (patch) => {
+      const previousOverlayText = debugState.overlayText;
+      Object.assign(debugState, patch || {});
+      const nextOverlayText = debugState.overlayText;
+      if (
+        debugState.isStreaming === true ||
+        nextOverlayText !== previousOverlayText ||
+        debugState.runtimeStatus === "bubble updated" ||
+        debugState.runtimeStatus === "bubble streaming"
+      ) {
+        cancelOverlayHide();
+      }
+      renderStatus();
+    };
+
+    if (typeof window.echoDesktopLive2D?.onBubbleInteractionMode === "function") {
+      window.echoDesktopLive2D.onBubbleInteractionMode((payload) => {
+        setOverlayInteractive(payload?.interactive === true);
+      });
+    }
+
+    window.addEventListener("mousemove", (event) => {
+      if (overlayDragActive) {
+        requestWindowInteractivity(true);
+        return;
+      }
+      requestWindowInteractivity(isPointerInsideOverlay(event.clientX, event.clientY));
+    });
+
+    window.addEventListener("mouseleave", () => {
+      if (!overlayDragActive) {
+        requestWindowInteractivity(false);
+      }
+    });
+
+    subtitleOverlayPanelElement?.addEventListener("pointerdown", async (event) => {
+      if (event.target instanceof Element && event.target.closest("button")) {
+        return;
+      }
+      await beginOverlayDrag(event);
+    });
+
+    subtitleDragHandleElement?.addEventListener("pointerdown", async (event) => {
+      await beginOverlayDrag(event);
+    });
+
+    window.addEventListener("pointermove", async (event) => {
+      await updateOverlayDrag(event);
+    });
+
+    window.addEventListener("pointerup", async () => {
+      await endOverlayDrag();
+    });
+
+    window.addEventListener("pointercancel", async () => {
+      await endOverlayDrag();
+    });
+
+    window.addEventListener("blur", async () => {
+      await endOverlayDrag();
+      requestWindowInteractivity(false);
+    });
+
+    subtitleMinimizeButtonElement?.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      await window.echoDesktopLive2D?.minimizeCurrentWindow?.();
+    });
+
+    subtitleCloseButtonElement?.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      await window.echoDesktopLive2D?.closeCurrentWindow?.();
+    });
+
+    function writeBootStatus(message) {
+      const text = String(message);
+      globalThis.__echoDesktopBubbleSetDebugState({
+        bootStage: globalThis.__echoDesktopLive2DBootStage || debugState.bootStage,
+        bootStatus: text
+      });
+      console.error("[desktop-live2d bubble boot]", text);
+    }
+
+    globalThis.__echoDesktopLive2DBootStage = "bubble-html-loader";
+    renderStatus();
+    writeBootStatus("desktop-live2d bubble html loader ready");
+
+    window.addEventListener("error", (event) => {
+      const detail =
+        event.error instanceof Error
+          ? event.error.stack || event.error.message
+          : event.message || "unknown window error";
+      writeBootStatus(`renderer error: ${detail}`);
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      const detail =
+        event.reason instanceof Error
+          ? event.reason.stack || event.reason.message
+          : String(event.reason ?? "unknown rejection");
+      writeBootStatus(`renderer rejection: ${detail}`);
+    });
+
+    import("./bubble_bootstrap.mjs").catch((error) => {
+      const detail =
+        error instanceof Error ? error.stack || error.message : String(error);
+      writeBootStatus(`bubble bootstrap import failed: ${detail}`);
+    });
+  </script>
+</body>
+
+</html>

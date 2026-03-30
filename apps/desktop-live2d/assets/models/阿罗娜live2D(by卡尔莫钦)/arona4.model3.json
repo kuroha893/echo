@@ -1,0 +1,104 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "arona4.moc3",
+    "Textures": [
+      "arona4/texture_00.png",
+      "arona4/texture_01.png"
+    ],
+    "Physics": "arona4.physics3.json",
+    "DisplayInfo": "arona4.cdi3.json",
+    "Expressions": [
+      {
+        "Name": "哭哭",
+        "File": "expressions/哭哭.exp3.json"
+      },
+      {
+        "Name": "嘴变形",
+        "File": "expressions/嘴变形.exp3.json"
+      },
+      {
+        "Name": "嘴变形2",
+        "File": "expressions/嘴变形2.exp3.json"
+      },
+      {
+        "Name": "圈圈",
+        "File": "expressions/圈圈.exp3.json"
+      },
+      {
+        "Name": "墨镜",
+        "File": "expressions/墨镜.exp3.json"
+      },
+      {
+        "Name": "抓抓",
+        "File": "expressions/抓抓.exp3.json"
+      },
+      {
+        "Name": "指纹锁",
+        "File": "expressions/指纹锁.exp3.json"
+      },
+      {
+        "Name": "挤眼",
+        "File": "expressions/挤眼.exp3.json"
+      },
+      {
+        "Name": "星星眼",
+        "File": "expressions/星星眼.exp3.json"
+      },
+      {
+        "Name": "流口水",
+        "File": "expressions/流口水.exp3.json"
+      },
+      {
+        "Name": "牛奶",
+        "File": "expressions/牛奶.exp3.json"
+      },
+      {
+        "Name": "猫猫",
+        "File": "expressions/猫猫.exp3.json"
+      },
+      {
+        "Name": "生气",
+        "File": "expressions/生气.exp3.json"
+      },
+      {
+        "Name": "眯眼",
+        "File": "expressions/眯眼.exp3.json"
+      },
+      {
+        "Name": "脸红",
+        "File": "expressions/脸红.exp3.json"
+      },
+      {
+        "Name": "螺旋",
+        "File": "expressions/螺旋.exp3.json"
+      },
+      {
+        "Name": "阴脸",
+        "File": "expressions/阴脸.exp3.json"
+      }
+    ],
+    "Motions": {
+      "Auto": [
+        {
+          "File": "idle.motion3.json"
+        },
+        {
+          "File": "shuijiao.motion3.json"
+        }
+      ]
+    }
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": []
+    },
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": []
+    }
+  ]
+}

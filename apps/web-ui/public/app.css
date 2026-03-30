@@ -1,0 +1,156 @@
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(127, 216, 255, 0.22), transparent 32%),
+    linear-gradient(180deg, #08111b 0%, #0d1723 100%);
+  color: #edf5ff;
+  font-family: "Segoe UI", "Microsoft YaHei UI", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.rail {
+  padding: 24px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 18, 30, 0.78);
+  backdrop-filter: blur(14px);
+}
+
+.brand__eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7fd8ff;
+}
+
+.brand h1 {
+  margin: 6px 0 10px;
+  font-size: 28px;
+}
+
+.brand p,
+.placeholder,
+.status-card p {
+  color: #bfd0e3;
+}
+
+.nav {
+  display: grid;
+  gap: 10px;
+  margin: 28px 0;
+}
+
+.nav button,
+.panel__header button,
+.composer button,
+.button-row button,
+#voice-form button {
+  appearance: none;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: #193146;
+  color: #edf5ff;
+  cursor: pointer;
+}
+
+.nav button.is-active {
+  background: linear-gradient(135deg, #1e8fd4 0%, #39b27f 100%);
+}
+
+.card,
+.panel {
+  background: rgba(13, 23, 35, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
+.workspace {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.panel {
+  display: none;
+  padding: 20px;
+}
+
+.panel.is-active,
+.panel--debug {
+  display: block;
+}
+
+.panel__header,
+.button-row,
+.composer,
+.stack {
+  display: flex;
+  gap: 12px;
+}
+
+.panel__header {
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.transcript-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.transcript-entry {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.transcript-entry__role {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #7fd8ff;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.composer,
+.stack {
+  flex-direction: column;
+}
+
+textarea,
+input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 14px;
+  color: #edf5ff;
+  background: rgba(4, 10, 19, 0.72);
+  font: inherit;
+}
+
+.code-block {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 880px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+}

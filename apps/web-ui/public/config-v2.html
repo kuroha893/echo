@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Echo Config v2</title>
+    <link rel="stylesheet" href="/system.css" />
+    <link rel="stylesheet" href="/config-v2.css" />
+  </head>
+  <body class="cv2-page" data-theme="dark">
+    <div class="cv2-shell">
+      <header class="cv2-header">
+        <div class="cv2-header-left">
+          <div class="cv2-eyebrow">Echo browser control plane</div>
+          <h1 class="cv2-title">Config v2</h1>
+          <p class="cv2-subtitle">
+            Configure the required cloud primary LLM and Qwen TTS, run voice
+            enrollment with a dropped local audio sample, then optionally add a
+            local fast LLM accelerator.
+          </p>
+        </div>
+        <div class="cv2-header-actions">
+          <label class="theme-control" for="cv2ThemeSelect">
+            <span>Theme</span>
+            <select id="cv2ThemeSelect" aria-label="Theme">
+              <option value="dark">dark</option>
+              <option value="light">light</option>
+            </select>
+          </label>
+          <a class="btn" href="/">Back to chat</a>
+        </div>
+      </header>
+
+      <nav id="cv2TabBar" class="cv2-tabbar" aria-label="Config panels"></nav>
+
+      <div class="cv2-main">
+        <section class="panel cv2-editor-pane">
+          <div class="cv2-editor-toolbar">
+            <div class="cv2-file-block">
+              <div class="cv2-file-label">desktop-provider-settings</div>
+              <div class="cv2-file-copy">
+                Echo settings remain app-local and bounded to the approved provider family.
+              </div>
+            </div>
+            <div class="cv2-toolbar-actions">
+              <button id="cv2LoadBtn" class="btn" type="button">Reload</button>
+              <button id="cv2ValidateBtn" class="btn" type="button">Validate</button>
+              <button id="cv2SaveBtn" class="btn btn-send" type="button">Save</button>
+            </div>
+          </div>
+
+          <section class="cv2-panel-wrap">
+            <header class="cv2-panel-header">
+              <h2 id="cv2PanelTitle" class="cv2-panel-title">Desktop provider settings</h2>
+              <div class="cv2-panel-note">One production path, voice enrollment, plus optional local acceleration.</div>
+            </header>
+            <div id="cv2PanelBody" class="cv2-panel-body"></div>
+          </section>
+
+          <footer class="cv2-editor-footer">
+            <span id="cv2Status" class="status ok">Loading settings...</span>
+          </footer>
+        </section>
+
+        <aside class="panel cv2-agent-pane">
+          <div class="cv2-agent-header">
+            <div class="cv2-agent-kicker">Agent summary</div>
+            <div class="cv2-agent-title">Current scope</div>
+            <div class="cv2-agent-hint">
+              This page stays inside Echo's single-session production provider settings.
+            </div>
+          </div>
+          <div id="cv2AgentSummary" class="cv2-agent-summary"></div>
+        </aside>
+      </div>
+    </div>
+    <script type="module" src="/config-v2.mjs"></script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Echo Chat</title>
+    <link rel="stylesheet" href="/system.css" />
+    <link rel="stylesheet" href="/chat.css" />
+  </head>
+  <body class="chat-page" data-theme="dark">
+    <div class="app-shell">
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-top">
+          <div class="echo-brand">
+            <div class="echo-brand__eyebrow">Echo</div>
+            <div class="echo-brand__title">Browser Chat</div>
+            <div class="echo-brand__subtitle">Single-session local control plane</div>
+          </div>
+
+          <div class="echo-links">
+            <a class="config-link" href="/config-v2.html">Config v2</a>
+          </div>
+
+          <section class="persona-panel">
+            <div class="persona-title">Local Status</div>
+            <div id="statusHint" class="persona-hint">single-session desktop companion</div>
+          </section>
+        </div>
+
+        <div class="session-title">Current Session</div>
+        <div id="sessionList" class="session-list"></div>
+      </aside>
+
+      <main class="chat-main">
+        <header class="chat-header">
+          <button id="menuBtn" class="btn btn-ghost menu-btn" title="Toggle sidebar">☰</button>
+          <div class="chat-header-main">
+            <div id="activeSessionName" class="session-name">Current session</div>
+            <div class="runtime-line">
+              <div id="runtimeStatus" class="runtime-status">Connecting</div>
+              <div id="runtimeStatusDetail" class="runtime-status-detail">
+                Loading provider readiness...
+              </div>
+            </div>
+          </div>
+          <div class="header-chip-wrap">
+            <div class="header-chip-label">Transcript</div>
+            <div id="transcriptCountChip" class="header-chip">0 lines</div>
+          </div>
+          <button id="debugPanelToggleBtn" class="btn" type="button">Debug Panel</button>
+        </header>
+
+        <section id="messageList" class="message-list"></section>
+
+        <section id="debugPanel" class="debug-panel">
+          <div class="debug-toolbar">
+            <div class="debug-status-wrap">
+              <span class="debug-label">Debug Stream</span>
+              <span id="debugStreamStatus" class="debug-stream-status">Disconnected</span>
+            </div>
+            <div class="debug-panel-note">SSE debug visibility from the local Echo control plane.</div>
+          </div>
+          <div id="debugStreamList" class="debug-stream-list"></div>
+        </section>
+
+        <footer class="composer-wrap">
+          <div class="composer-inner">
+            <textarea
+              id="chatInput"
+              rows="1"
+              placeholder="Send a message..."
+              autocomplete="off"
+            ></textarea>
+            <div class="composer-actions">
+              <button id="sendBtn" class="btn btn-send" type="button">Send</button>
+            </div>
+          </div>
+          <div class="composer-tip">
+            Enter sends. Shift+Enter inserts a new line. Browser chat stays single-session only.
+            <span class="version-tag">echo.web-ui.chat</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "echo-desktop-live2d",
+  "private": true,
+  "type": "module",
+  "description": "Echo desktop-live2d app shell and bounded local bridge",
+  "scripts": {
+    "bridge:stdio": "node ./bridge/stdio_bridge.mjs",
+    "self-check:pixi": "node ./renderer/pixi_runtime_self_check.mjs",
+    "self-check:story-mode": "node ./electron/story_mode_self_check.mjs",
+    "self-check:story-mode-integration": "node ./electron/story_mode_integration_self_check.mjs",
+    "self-check:story-mode-console-tab": "node ./electron/story_mode_console_tab_self_check.mjs",
+    "smoke": "node ./scripts/smoke.mjs",
+    "verify:electron": "node ./scripts/electron_demo_verification.mjs",
+    "verify:live-provider": "node ./scripts/live_provider_demo_verification.mjs",
+    "start": "node ./bridge/stdio_bridge.mjs",
+    "start:electron": "electron ./electron/main.mjs"
+  },
+  "dependencies": {
+    "@fontsource/m-plus-rounded-1c": "^5.2.10",
+    "pixi-live2d-display": "^0.4.0",
+    "pixi.js": "^6.5.10"
+  },
+  "devDependencies": {
+    "electron": "^36.4.0"
+  }
+}
